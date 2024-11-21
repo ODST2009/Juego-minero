@@ -2,7 +2,8 @@
     var background, background2
     var carretilla, carretilla2, fogata
     var diamante, rubi, oro, plata, bronce
-    
+    var puntaje = 0
+    var usebackground2 = false
     
    //precargar multimedia
    function preload(){
@@ -21,19 +22,20 @@
    
     //configuracion inicial
     function setup(){
-        //fondo1
+      /*  //fondo1
         background = createSprite(600,300);
         background.addImage("background",backgroundImg);
         background.visible = true;
         //fondo2
         background2 = createSprite(600,300);
         background2.addImage("background2", background2Img);
-        background2.visible = false;
+        background2.visible = false;*/
         //crear minero
         minero = createSprite(250, 600, 15, 15);
         minero.addImage("minero",mineroImg);
         minero.scale = 0.2
-
+         
+       
         /*
         //crear carretilla
         carretilla = createSprite(50, 50, 50, 50);
@@ -54,7 +56,7 @@
    //loop para ver cambios en el juego
    function draw(){
      //background(180);
- 
+
      // controles del juego
      if (keyDown("left")){
          minero.x -= 5;  
@@ -68,11 +70,10 @@
      if (keyDown("down")){
          minero.y += 5;  
      }
- 
-      
+    
        
         //carretilla
-     if (World.frameCount %90 === 0){
+     if (World.frameCount %250 === 0){
         carretilla2 = createSprite(300, 20, 50, 50);
         carretilla2.velocityY = 4
         carretilla2.lifetime = 200
@@ -81,9 +82,17 @@
         carretilla2.x = Math.round(random(20, 800))
         carretilla2Group.add(carretilla2);
     }
+    //choque con la carretilla
+    for (var i = 0; i < carretilla2Group.length; i++){
+        carretilla = carretilla2Group[i];
+        if (minero.isTouching(carretilla)){
+            usebackground2 = !usebackground2;
+            carretilla.remove();
+        }
+    }
    //Minerales
     //diamante
-    if (World.frameCount %100    === 0){
+    if (World.frameCount %200 === 0){
         diamante = createSprite (300, 20, 50, 50);
         diamante.velocityY = 4
         diamante.lifetime = 200
@@ -92,16 +101,16 @@
         diamante.x = Math.round(random(20, 800))
     }
     //rubi
-    if (World.frameCount %50 === 0){
+    if (World.frameCount %175 === 0){
         rubi = createSprite (300, 20, 50, 50);
         rubi.velocityY = 4
         rubi.lifetime = 200
-        rubi.scale = 0.05;
+        rubi.scale = 0.03;
         rubi.addImage(rubiImg);
         rubi.x = Math.round(random(20, 800))
     }
     //oro
-    if (World.frameCount %70 === 0){
+    if (World.frameCount %150 === 0){
         oro = createSprite (300, 20, 50, 50);
         oro.velocityY = 4
         oro.lifetime = 200
@@ -110,7 +119,7 @@
         oro.x = Math.round(random(20, 800))
     }
     //plata
-    if (World.frameCount %30 === 0){
+    if (World.frameCount %100 === 0){
         plata = createSprite (300, 20, 50, 50)
         plata.velocityY = 4
         plata.lifetime = 200
@@ -119,28 +128,62 @@
         plata.x = Math.round(random(20, 800))
     }
     //bronce
-    if (World.frameCount %10 === 0){
+    if (World.frameCount %80 === 0){
         bronce = createSprite (300, 20, 50, 50)
         bronce.velocityY = 4
         bronce.lifetime = 200
         bronce.scale = 0.05;
-        bronce.addImage(plataImg);
+        bronce.addImage(bronceImg);
         bronce.x = Math.round(random(20, 800))
     }
-        
+      
     //cabio de fondos
-     if(minero.isTouching(carretilla2Group)){
-        background.visible = false;
-        background2.visible = true;
-     }
+    if (usebackground2){
+        background(background2Img);
+    }else{
+        background(backgroundImg);
+    }
+     //puntaje
+     textSize(30);
+     fill("white");
+     text("Puntaje: " + puntaje, 400, 50);
+
+    //colisones
+      //diamante
+         if (diamante && minero && diamante.isTouching(minero)) {
+            diamante.destroy();
+            puntaje += 10;
+            //puntaje = puntaje +1;
+        }
+        //rubi
+        if (rubi && minero && rubi.isTouching(minero)) {
+            rubi.destroy();
+            puntaje += 10;
+        }
+        //oro
+        if (oro && minero && oro.isTouching(minero)) {
+            oro.destroy();
+            puntaje += 10;
+        }
+        //plata
+        if (plata && minero && plata.isTouching(minero)) {
+            plata.destroy();
+            puntaje += 10;
+        }
+        //bronce
+        if (bronce && minero && bronce.isTouching(minero)) {
+            bronce.destroy();
+            puntaje += 10;
+        }
+
+
+
+
 
      /*if(minero.isTouching(carretilla2Group) && background2.visible == true){
         background.visible = true;
         background2.visible = false;
      }*/
-
-    
-
 
 
      drawSprites();
@@ -153,6 +196,11 @@
 
     // otro codigo
 
+    /*if(minero.isTouching(carretilla2Group)){
+        background.visible = false;
+        background2.visible = true;
+     }*/
+
    /* 
      lluviademinerales();
    
@@ -164,8 +212,8 @@
           resources.scale = 0.05;
           resources.x = Math.round(random(20, 800))
   
-          var rand = Math.round(random(1,5));
-          switch(rand){
+         var rand = Math.round(random(1,5));
+          switch (rand){
                   case 1: resources.addImage(diamanteImg);
               break;
                   case 2: resources.addImage(rubiImg);
